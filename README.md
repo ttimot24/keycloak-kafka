@@ -1,5 +1,8 @@
-# Keycloak Kafka Module
-Simple module for [Keycloak](https://www.keycloak.org/) to produce keycloak events to [Kafka](https://kafka.apache.org/).
+# Keycloak Kafka Schema Aware Module
+
+This repo is a fork of the original simple Kafka module: [SnuK87/keycloak-kafka](https://github.com/SnuK87/keycloak-kafka) extended with scheam aware producers.
+
+Th purpose of this project is to add a module for [Keycloak](https://www.keycloak.org/) to produce keycloak events to [Kafka](https://kafka.apache.org/).
 
 - [Keycloak Kafka Module](#keycloak-kafka-module)
   * [Build](#build)
@@ -13,6 +16,15 @@ Simple module for [Keycloak](https://www.keycloak.org/) to produce keycloak even
   * [Docker Container](#docker-container)  
   * [Sample Client](#sample-client)
 
+---
+
+### Supported formats
+
+* Simple JSON
+* AVRO
+
+**JSON Schema** and **Protobuf** are in progress
+
 **Tested with** 
 
 Kafka version: `2.12-2.1.x`, `2.12-2.4.x`, `2.12-2.5.x`, `2.13-2.8`, `2.13-3.3.x`
@@ -20,8 +32,6 @@ Kafka version: `2.12-2.1.x`, `2.12-2.4.x`, `2.12-2.5.x`, `2.13-2.8`, `2.13-3.3.x
 Keycloak version: `19.0.x, 21.0.x`
 
 Java version: `17`
-
-Check out [this older version](https://github.com/SnuK87/keycloak-kafka/tree/1.1.1) to run the module on a Wildfly server
 
 
 ## Build
@@ -52,6 +62,12 @@ The following properties can be set via environment variables (e.g. `${KAFKA_TOP
 - `events` (env `KAFKA_EVENTS`): The events that will be send to kafka.
 
 - `topicAdminEvents` (env `KAFKA_ADMIN_TOPIC`): (Optional) The name of the kafka topic to where the admin events will be produced to. No events will be produced when this property isn't set.
+
+- `valueSerializerClass` (env `KAFKA_VALUE_SERIALIZER_CLASS`): (Optional) The default is simple JSON serialization. The serializer class to be used. It should be Confluent's [io.confluent.kafka.serializers.KafkaAvroSerializer](https://github.com/confluentinc/schema-registry/blob/master/avro-serializer/src/main/java/io/confluent/kafka/serializers/KafkaAvroSerializer.java) to serialize events in AVRO format.
+
+- `schemaRegistryUrl` (env `SCHEMA_REGISTRY_URL`): (Only required with Confluent producers) The SchemaRegistry server URL where the schemas are stored.
+
+- `autoRegisterSchemas` (env `KAFKA_AUTO_REGISTER_SCHEMAS`): (Optional) The default value is false. The mode of the schema handling. If auto register is turned of an exception will be thrown when the schema can not be found.
 
 A list of available events can be found [here](https://www.keycloak.org/docs/latest/server_admin/#event-types)
 
@@ -105,6 +121,12 @@ install the module with all it's dependencies on start up.
 The simplest way to enable the kafka module in a docker container is to create a custom docker image from the keycloak base image. A simple example can be found in the [Dockerfile](Dockerfile).
 When you build this image on your local machine by using `docker build . -t keycloak-kafka`, you can test everything by running the [docker-compose](docker-compose.yml) file on your local machine. 
 This just provides a simple example to show how it's working. Please consider to read [this documentation](https://www.keycloak.org/server/containers) and create your own Dockerfile.
+
+## Set up local test environment
+
+```sh
+docker-compose build && docker-compose up
+```
 
 ## Sample Client
 
