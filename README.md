@@ -1,6 +1,6 @@
 # Keycloak Kafka Schema Aware Module
 
-This repo is a fork of the original simple Kafka module: [SnuK87/keycloak-kafka](https://github.com/SnuK87/keycloak-kafka) extended with scheam aware producers.
+This repo is a fork of the original simple Kafka module: [SnuK87/keycloak-kafka](https://github.com/SnuK87/keycloak-kafka) extended with schema aware producers.
 
 Th purpose of this project is to add a module for [Keycloak](https://www.keycloak.org/) to produce keycloak events to [Kafka](https://kafka.apache.org/).
 
